@@ -1,46 +1,64 @@
-import * as quizzesDao from "./dao.js"; // Import DAO functions for quizzes
+import * as quizzesDao from "./dao.js";
 
 export default function QuizRoutes(app) {
 
-    // Create a new quiz
-    app.post("/api/quizzes/createUnpublishedQuiz", (req, res) => {
-        const quiz = { ...req.body, quiz_id: new Date().toString() };
-        const newQuiz = quizzesDao.createUnpublishedQuiz(quiz);
-        res.status(201).json(newQuiz); //
+    // get all quizzes
+    app.get("/api/quizzes", (req, res) => {
+        const quizzes = quizzesDao.selectAllQuiz();
+        res.json(quizzes);
     });
-    app.post("/api/quizzes/createPublishedQuiz", (req, res) => {
-        const quiz = { ...req.body, quiz_id: new Date().toString() };
-        const newQuiz = quizzesDao.createPublishedQuiz(quiz);
+
+    // get a quiz by ID
+    app.get("/api/quizzes/:quizId", (req, res) => {
+        const { quizId } = req.params;
+        const quiz = quizzesDao.selectQuizById(quizId);
+        if (quiz) {
+            res.json(quiz);
+        } else {
+            res.status(404).send({ error: 'Quiz not found' });
+        }
+    });
+
+    // create a quiz
+    app.post("/api/quizzes", (req, res) => {
+        const quiz = req.body;
+        const newQuiz = quizzesDao.createUnpublishedQuiz(quiz);
         res.status(201).json(newQuiz);
     });
-    app.post("/api/quizzes/updateQuiz", (req, res) => {
-        const { quizId } = req.body;
-        const newQuiz = quizzesDao.updateQuiz(quizId); // Create the quiz using the DAO
-        res.status(201).json(newQuiz); // Return the new quiz with 201 Created status
+
+    // update a quiz
+    app.put("/api/quizzes/:quizId", (req, res) => {
+        const { quizId } = req.params;
+        const dataList = req.body;
+        const result = quizzesDao.updateQuiz(quizId, dataList);
+        if (result === 'success') {
+            res.status(200).send({ message: 'Quiz updated successfully' });
+        } else {
+            res.status(404).send({ error: 'Quiz not found' });
+        }
     });
 
-    // Delete a quiz by ID
+    // delete a quiz
     app.delete("/api/quizzes/:quizId", (req, res) => {
         const { quizId } = req.params;
-        quizzesDao.deleteQuiz(quizId); // Delete the quiz using the DAO
-        res.sendStatus(204); // Return 204 No Content status
+        const result = quizzesDao.deleteQuiz(quizId);
+        if (result === 'success') {
+            res.sendStatus(204);
+        } else {
+            res.status(404).send({ error: 'Quiz not found' });
+        }
     });
 
-        app.post("/api/quizzes/getQuizzesById", (req, res) => {
-        const { quizId } = req.body;
-        const selectedQuiz = quizzesDao.selectQuizById(quizId); // Delete the quiz using the DAO
-            res.send(selectedQuiz);
-        });
-    app.post("/api/quizzes/publishById", (req, res) => {
-        const { quizId } = req.body;
-        const selectedQuiz = quizzesDao.publishById(quizId); // Delete the quiz using the DAO
-        res.send(selectedQuiz);
+    // publish or unpublish a quiz
+    app.post("/api/quizzes/:quizId/publish", (req, res) => {
+        const { quizId } = req.params;
+        const result = quizzesDao.publishById(quizId);
+        if (result === 'success') {
+            res.status(200).send({ message: 'Quiz publish status toggled' });
+        } else {
+            res.status(404).send({ error: 'Quiz not found' });
+        }
     });
-
-    app.get("/api/quizzes/getAllQuizzes", (req, res) => {
-        const selectedAllQuiz = quizzesDao.selectAllQuiz(); // Delete the quiz using the DAO
-        res.send(selectedAllQuiz);
-    });
-
 
 }
+
