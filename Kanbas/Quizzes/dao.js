@@ -12,3 +12,8 @@ export function createQuiz(quiz) {
     delete quiz._id
     return model.create(quiz);
 }
+
+// Fetch all quizzes from the database
+export function findAllQuizzes() {
+    return model.find().populate("course"); // Populate course for reference
+}

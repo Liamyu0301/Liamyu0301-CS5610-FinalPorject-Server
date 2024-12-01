@@ -49,6 +49,9 @@ const schema = new mongoose.Schema(
         dueDate: Date,
         availableDate: Date,
         availableUntil: Date,
+
+        // inclusion of published field and default values.
+        published: { type: Boolean, default: false }
     },
     { collection: "quizzes" }
 );

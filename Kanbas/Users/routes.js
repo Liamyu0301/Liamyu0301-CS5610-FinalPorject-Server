@@ -134,6 +134,42 @@ export default function UserRoutes(app) {
         const status = await enrollmentsDao.unenrollUserFromCourse(uid, cid);
         res.send(status);
     };
+
+
+    // Get all quizzes
+    const getAllQuizzes = async (req, res) => {
+        const currentUser = req.session["currentUser"];
+
+        if (!currentUser) {
+            res.sendStatus(401); // Unauthorized if no user is logged in
+            return;
+        }
+
+        try {
+            // Fetch quizzes
+            let quizzes = await dao.findAllQuizzes();
+
+            // Check user role and filter quizzes accordingly
+            if (currentUser.role === "FACULTY") {
+                // Faculty sees all quizzes
+                res.json(quizzes);
+            } else if (currentUser.role === "STUDENT") {
+                // Students only see published quizzes
+                quizzes = quizzes.filter(quiz => quiz.published);
+                res.json(quizzes);
+            } else {
+                res.status(403).json({ message: "Forbidden" });
+            }
+        } catch (error) {
+            console.error("Error fetching quizzes:", error);
+            res.status(500).json({ message: "Error fetching quizzes" });
+        }
+    };
+
+// Add the route handler
+    app.get("/api/quizzes/getAllQuizzes", getAllQuizzes);
+
+
     app.post("/api/users/:uid/courses/:cid", enrollUserInCourse);
     app.delete("/api/users/:uid/courses/:cid", unenrollUserFromCourse);
     app.post("/api/users", createUser);
