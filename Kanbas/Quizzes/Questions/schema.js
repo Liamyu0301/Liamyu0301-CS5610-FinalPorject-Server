@@ -5,7 +5,7 @@ const choiceSchema = new mongoose.Schema({
   isCorrect: { type: Boolean, default: false } // Whether this choice is correct
 });
 
-const questionSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     title: { type: String, required: true }, 
     points: { type: Number, required: true, min: 0 },
@@ -28,7 +28,7 @@ const questionSchema = new mongoose.Schema(
         }
       ]
     },
-    quiz: { type: mongoose.Schema.Types.ObjectId, ref: "Quizzes" }
+    quiz: { type: mongoose.Schema.Types.ObjectId, ref: "QuizzesModel" },
   },
   { collection: "questions", timestamps: true }
 );

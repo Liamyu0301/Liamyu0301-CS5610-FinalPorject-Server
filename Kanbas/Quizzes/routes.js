@@ -23,7 +23,7 @@ export default function QuizRoutes(app) {
     });
 
     //add question for quiz
-    app.post("api/quizzes/:quizId/questions", async (req, res) => {
+    app.post("/api/quizzes/:quizId/questions", async (req, res) => {
         const { quizId } = req.params;
         const question = { ...req.body, quiz: quizId };
         const newQuestion = await questionsDao.addQuestion(quiz);
