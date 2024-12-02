@@ -49,6 +49,8 @@ const schema = new mongoose.Schema(
         dueDate: Date,
         availableDate: Date,
         availableUntil: Date,
+        //published 
+        published: Boolean,
     },
     { collection: "quizzes" }
 );
