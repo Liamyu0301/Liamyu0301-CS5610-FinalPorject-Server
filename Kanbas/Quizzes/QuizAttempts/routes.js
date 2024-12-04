@@ -33,14 +33,14 @@ export default function QuizAttemptRoutes(app) {
       if (question.type === "Multiple Choice") {
         // Find the correct choice
         const correctChoice = question.multipleChoice.choices.find((choice) => choice.isCorrect);
-      
         // Check if the user's answer matches the correct choice
         isCorrect = correctChoice && answer.answer === correctChoice.text;
       } else if (question.type === "True/False") {
         isCorrect = question.trueFalse.correctAnswer === answer.answer;
       } else if (question.type === "Fill in the Blank") {
+        // rewrite this!!! each answer is also an array 
         isCorrect = question.fillInTheBlank.answers.every(
-          (correctAnswer) => correctAnswer.text === answer.answer
+          (correctAnswer) => correctAnswer.text === answer.answer.text
         );
       }
 
