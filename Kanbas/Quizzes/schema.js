@@ -19,9 +19,10 @@ const schema = new mongoose.Schema(
         },
         options: {
             shuffleAnswers: { type: Boolean, default: false },
-            timeLimit: { type: Boolean, default: false },
-            timeLimitMinutes: Number,
+            timeLimit: { type: Boolean, default: true },
+            timeLimitMinutes: { type: Number, default: 20 },
             multipleAttempts: { type: Boolean, default: false },
+            numOfAttempts: { type: Number, default: 1 },
             showCorrectAnswers: { type: Boolean, default: true },
             showCorrectAnswersTime: {
                 type: String,
@@ -35,8 +36,8 @@ const schema = new mongoose.Schema(
                 default: "Percentage",
                 required: true
             },
-            accessCode: { type: Boolean, default: false },
-            oneQuestionAtATime: { type: Boolean, default: false },
+            accessCode: { type: String, default: "" },
+            oneQuestionAtATime: { type: Boolean, default: true },
             webcamReq: { type: Boolean, default: false },
             lockQuestions: { type: Boolean, default: false }
         },
