@@ -26,8 +26,8 @@ const schema = new mongoose.Schema(
             showCorrectAnswers: { type: Boolean, default: true },
             showCorrectAnswersTime: {
                 type: String,
-                enum: ["Immediately", "One Day", "One Week"],
-                default: "Immediately",
+                enum: ["Never", "Immediately", "One Day", "One Week"],
+                default: "Never",
                 required: true
             },
             displayGradeAs: {
