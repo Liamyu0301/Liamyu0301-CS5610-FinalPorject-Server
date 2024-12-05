@@ -1,7 +1,7 @@
 import * as dao from './dao.js';
 import * as questionsDao from '../Questions/dao.js';
 import * as quizzesDao from '../dao.js';
-import mongoose from 'mongoose';
+import * as userDao from "../../Users/dao.js";
 
 export default function QuizAttemptRoutes(app) {
   //create a quiz attempt 
@@ -81,17 +81,17 @@ app.post('/api/quizzes/:uid/:qid', createQuizAttempt);
 const updateQuizAttempt = async (req, res) => {
   try {
     const { uid, qid } = req.params; 
-    const { user, answers } = req.body;
+    const { answers } = req.body;
 
     // Find the existing attempt
     const quizAttempt = await dao.getQuizAttemptById(uid, qid);
     const quiz = await quizzesDao.getQuiz(qid);
 
+    const user = await userDao.findUserById(uid);
+
     // Check if the student has remaining attempts
-    if ((quizAttempt.attemptNumber >= quiz.allowedAttempts) && user.role === "STUDENT") {
-      // const result = quiz.allowedAttempts
+    if ((quizAttempt.attemptNumber >= quiz.options.allowedAttempts) && user.role === 'STUDENT') {
       return res.status(403).json({ error: "Maximum attempts reached." });
-      // return res.status(403).json(result);
     }
 
     //get questions
