@@ -76,7 +76,7 @@ export default function QuizAttemptRoutes(app) {
     res.status(500).json({ error: error.message });
   }
 };
-app.post('/api/quizzes/:uid/:qid', createQuizAttempt);
+app.post('/api/quizzes/:uid/:qid/attempt', createQuizAttempt);
 
 const updateQuizAttempt = async (req, res) => {
   try {
@@ -148,14 +148,15 @@ const updateQuizAttempt = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-app.put('/api/quizzes/:uid/:qid', updateQuizAttempt);
+app.put('/api/quizzes/:uid/:qid/attempt', updateQuizAttempt);
 
 const getQuizAttempt = async (req, res) => {
+  console.log("getQuizAttemptRuns");
   const {uid, qid} = req.params;
   const attempt = await dao.getQuizAttemptByUserAndQuiz(uid, qid);
   res.send(attempt);
 }
-app.get('/api/quizzes/:uid/:qid', getQuizAttempt);
+app.get('/api/quizzes/:uid/:qid/attempt', getQuizAttempt);
 
 }
 
