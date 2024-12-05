@@ -7,11 +7,10 @@ export const getQuizAttemptByUserAndQuiz = (userId, quizId) => {
 };
 
 // get quiz attempt by id 
-// export const getQuizAttemptById = (userId, quizId) => {
-//   const attempt = model.find({ user: userId, quiz: quizId });
-//   const attemptId = attempt._id;
-//   return model.findById(attemptId);
-// };
+export const getQuizAttemptById = (userId, quizId) => {
+  return model.findOne({ user: userId, quiz: quizId });
+
+};
 
 //post to add a quiz attempt
 export const createQuizAttempt = (quizAttempt) => {
@@ -19,8 +18,18 @@ export const createQuizAttempt = (quizAttempt) => {
   return model.create(quizAttempt);
 };
 
-export const updateQuizAttempt = (userId, quizId, quizAttempt) => {
-  const attempt = model.find({ user: userId, quiz: quizId });
-  const attemptId = attempt._id;
-  return model.updateOne({ _id: attemptId }, quizAttempt);
-}
+export const updateQuizAttempt = async (quizAttemptId, quizAttemptUpdates) => {
+  // Fetch the existing attempt
+  // const attempt = await model.findOne({ user: userId, quiz: quizId });
+  
+  // if (!attempt) {
+  //   throw new Error("Quiz attempt not found");
+  // }
+  // const attemptId = attempt._id;
+  // // Remove _id field from the quizAttempt to prevent updating it
+  // const { _id, ...updateFields } = quizAttempt;
+
+  // // Use $set to update the fields
+  // return model.updateOne({ _id: attemptId }, { $set: updateFields });
+  return model.updateOne({ _id: quizAttemptId }, quizAttemptUpdates);
+};

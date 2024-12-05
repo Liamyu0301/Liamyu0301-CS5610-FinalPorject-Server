@@ -1,6 +1,7 @@
 import * as dao from './dao.js';
 import * as questionsDao from '../Questions/dao.js';
 import * as quizzesDao from '../dao.js';
+import mongoose from 'mongoose';
 
 export default function QuizAttemptRoutes(app) {
   //create a quiz attempt 
@@ -19,8 +20,9 @@ export default function QuizAttemptRoutes(app) {
 
     let totalScore = 0;
     const processedAnswers = answers.map((answer) => {
+      // const questionId = mongoose.Types.ObjectId(answer.question); 
       const question = questions.find(
-        (question) => question._id === answer.questionId
+        (question) => question._id.toString() === answer.question
       );
 
       if (!question) {
@@ -59,7 +61,7 @@ export default function QuizAttemptRoutes(app) {
 
     // Prepare data for saving the quiz attempt
     const quizAttemptData = {
-      student: uid,
+      user: uid,
       quiz: qid,
       attemptNumber: 1,
       answers: processedAnswers,
@@ -67,42 +69,44 @@ export default function QuizAttemptRoutes(app) {
     };
 
     // Save the quiz attempt
-    const newAttempt = await quizAttemptDao.createQuizAttempt(quizAttemptData);
+    const newAttempt = await dao.createQuizAttempt(quizAttemptData);
 
     res.json(newAttempt);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-  app.post('/api/quizzes/:uid/:qid', createQuizAttempt);
-
 };
+app.post('/api/quizzes/:uid/:qid', createQuizAttempt);
 
 const updateQuizAttempt = async (req, res) => {
   try {
     const { uid, qid } = req.params; 
-    const { answers } = req.body;
+    const { user, answers } = req.body;
 
     // Find the existing attempt
-    const quizAttempt = await dao.getQuizAttemptByUserAndQuiz(uid, qid);
+    const quizAttempt = await dao.getQuizAttemptById(uid, qid);
     const quiz = await quizzesDao.getQuiz(qid);
-    if (!quizAttempt) {
-      return res.status(404).json({ error: "Quiz attempt not found." });
-    }
 
     // Check if the student has remaining attempts
-    if (quizAttempt.attemptCount >= quiz.allowedAttempts) {
+    if ((quizAttempt.attemptNumber >= quiz.allowedAttempts) && user.role === "STUDENT") {
+      // const result = quiz.allowedAttempts
       return res.status(403).json({ error: "Maximum attempts reached." });
+      // return res.status(403).json(result);
     }
+
+    //get questions
+    const questions = await questionsDao.getQuestions(qid);
 
     // Validate answers and calculate new score
     let totalScore = 0;
 
     const processedAnswers = await Promise.all(
       answers.map(async (answer) => {
-        const question = await questionsDao.findQuestionById(answer.questionId);
-
+        const question = questions.find(
+          (question) => question._id.toString() === answer.question
+        );
         if (!question) {
-          throw new Error(`Question not found: ${answer.questionId}`);
+          throw new Error(`Question not found: ${answer.question}`);
         }
 
         let isCorrect = false;
@@ -113,17 +117,21 @@ const updateQuizAttempt = async (req, res) => {
         } else if (question.type === "True/False") {
           isCorrect = question.trueFalse.correctAnswer === answer.answer;
         } else if (question.type === "Fill in the Blank") {
-          isCorrect = question.fillInTheBlank.answers.some(
-            (correctAnswer) => correctAnswer.text === answer.answer
-          );
+          isCorrect = answer.answer.every((providedAnswer, index) => {
+            const correctAnswer = question.fillInTheBlank.answers[index];
+            return correctAnswer && correctAnswer.text === providedAnswer.text;
+          });
         }
 
-        if (isCorrect) totalScore += question.points;
+        if (isCorrect) {
+          totalScore += question.points;
+        }
 
         return {
           question: question._id,
           answer: answer.answer,
           isCorrect,
+          questionPoints: question.points,
         };
       })
     );
@@ -132,9 +140,9 @@ const updateQuizAttempt = async (req, res) => {
     quizAttempt.answers = processedAnswers;
     quizAttempt.score = totalScore;
     quizAttempt.dateTaken = new Date();
-    quizAttempt.attemptCount += 1;
+    quizAttempt.attemptNumber += 1;
 
-    const updatedAttempt = await dao.updateQuizAttempt(uid, qid, quizAttempt);
+    const updatedAttempt = await dao.updateQuizAttempt(quizAttempt._id, quizAttempt);
     res.json(updatedAttempt);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -142,7 +150,12 @@ const updateQuizAttempt = async (req, res) => {
 };
 app.put('/api/quizzes/:uid/:qid', updateQuizAttempt);
 
-
+const getQuizAttempt = async (req, res) => {
+  const {uid, qid} = req.params;
+  const attempt = await dao.getQuizAttemptByUserAndQuiz(uid, qid);
+  res.send(attempt);
+}
+app.get('/api/quizzes/:uid/:qid', getQuizAttempt);
 
 }
 
