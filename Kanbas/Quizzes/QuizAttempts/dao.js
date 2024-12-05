@@ -2,9 +2,9 @@ import model from "./model.js";
 
 //get quiz attempts by student
 
-export const getQuizAttemptByUserAndQuiz = (userId, quizId) => {
-  return model.find({ user: userId, quiz: quizId });
-};
+// export const getQuizAttemptByUserAndQuiz = (userId, quizId) => {
+//   return model.find({ user: userId, quiz: quizId });
+// };
 
 // get quiz attempt by id 
 export const getQuizAttemptById = (userId, quizId) => {

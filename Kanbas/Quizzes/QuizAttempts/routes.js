@@ -152,7 +152,7 @@ app.put('/api/quizzes/:uid/:qid/attempt', updateQuizAttempt);
 
 const getQuizAttempt = async (req, res) => {
   const {uid, qid} = req.params;
-  const attempt = await dao.getQuizAttemptByUserAndQuiz(uid, qid);
+  const attempt = await dao.getQuizAttemptById(uid, qid);
   res.send(attempt);
 }
 app.get('/api/quizzes/:uid/:qid/attempt', getQuizAttempt);
