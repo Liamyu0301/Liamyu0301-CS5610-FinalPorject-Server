@@ -117,6 +117,9 @@ const updateQuizAttempt = async (req, res) => {
         } else if (question.type === "True/False") {
           isCorrect = question.trueFalse.correctAnswer === answer.answer;
         } else if (question.type === "Fill in the Blank") {
+          if (!Array.isArray(answer.answer)) {
+            throw new Error(`Invalid data: answer.answer must be an array for "Fill in the Blank" questions.`);
+          }
           isCorrect = answer.answer.every((providedAnswer, index) => {
             const correctAnswer = question.fillInTheBlank.answers[index];
             return correctAnswer && correctAnswer.text === providedAnswer.text;

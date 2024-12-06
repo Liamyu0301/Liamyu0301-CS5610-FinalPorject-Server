@@ -14,6 +14,14 @@ export default function QuizRoutes(app) {
         res.send(status);
     });
 
+    //get quiz object
+
+    app.get("/api/quizzes/:quizId", async (req, res) => {
+        const {quizId} = req.params;
+        const quiz = await quizzesDao.getQuiz(quizId);
+        res.json(quiz);
+    });
+
     //get questions for quiz
 
     app.get("/api/quizzes/:quizId/questions", async (req, res) => {

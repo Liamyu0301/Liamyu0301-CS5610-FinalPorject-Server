@@ -19,17 +19,5 @@ export const createQuizAttempt = (quizAttempt) => {
 };
 
 export const updateQuizAttempt = async (quizAttemptId, quizAttemptUpdates) => {
-  // Fetch the existing attempt
-  // const attempt = await model.findOne({ user: userId, quiz: quizId });
-  
-  // if (!attempt) {
-  //   throw new Error("Quiz attempt not found");
-  // }
-  // const attemptId = attempt._id;
-  // // Remove _id field from the quizAttempt to prevent updating it
-  // const { _id, ...updateFields } = quizAttempt;
-
-  // // Use $set to update the fields
-  // return model.updateOne({ _id: attemptId }, { $set: updateFields });
   return model.updateOne({ _id: quizAttemptId }, quizAttemptUpdates);
 };
