@@ -90,7 +90,7 @@ const updateQuizAttempt = async (req, res) => {
     const user = await userDao.findUserById(uid);
 
     // Check if the student has remaining attempts
-    if ((quizAttempt.attemptNumber >= quiz.options.allowedAttempts) && user.role === 'STUDENT') {
+    if ((quizAttempt.attemptNumber >= quiz.options.numOfAttempts) && user.role === 'STUDENT') {
       return res.status(403).json({ error: "Maximum attempts reached." });
     }
 
