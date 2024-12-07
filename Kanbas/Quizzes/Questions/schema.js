@@ -7,8 +7,7 @@ const choiceSchema = new mongoose.Schema({
 
 const schema = new mongoose.Schema(
   {
-      _id: { type: String, required: true },
-      title: { type: String, required: true },
+    title: { type: String, required: true },
     points: { type: Number, required: true, min: 0 },
     questionText: { type: String, required: true },
     type: {
@@ -17,15 +16,25 @@ const schema = new mongoose.Schema(
       required: true
     },
     multipleChoice: {
-      choices: [choiceSchema] //1 List of choices for multiple choice questions
+      choices: {
+        type: [choiceSchema],
+        required: function () {
+          return this.type === "Multiple Choice";
+        }, //1 List of choices for multiple choice questions
     },
+  },
     trueFalse: {
-      correctAnswer: { type: Boolean, required: true } // Correct answer for true/false
+      correctAnswer: { type: Boolean, required: function () {
+        return this.type === "True or False";
+      }, } // Correct answer for true/false
     },
     fillInTheBlank: {
       answers: [
         {
-          text: { type: String, required: true }, // Possible correct answer
+          text: { type: String, required: function () {
+            return this.type === "Fill in Blanks";
+          },
+   }, // Possible correct answer
         }
       ]
     },

@@ -4,8 +4,8 @@ import model from "./model.js";
 export function getQuestions(quizId) {
   return model.find({ quiz: quizId });
 }
-export function getQuestionsById(_id) {
-  return model.find({ _id });
+export function getQuestionById(questionId) {
+  return model.findOne({ _id: questionId});
 }
 // add question
 

@@ -2,16 +2,15 @@ import * as questionsDao from "./dao.js"
 
 export default function QuestionsRoutes(app) {
     //add question for quiz
-    app.post("/api/questions/:questionId", async (req, res) => {
-        const { questionId } = req.params;
-        const question = { ...req.body, questionId };
+    app.post("/api/questions/:quizId", async (req, res) => {
+        const { quizId } = req.params;
+        const question = { ...req.body, quiz: quizId };
         const newQuestion = await questionsDao.addQuestion(question);
         res.send(newQuestion);
     });
     app.get("/api/questions/:questionId", async (req, res) => {
         const { questionId } = req.params;
-        console.log(questionId,'iididididi')
-        const questions = await questionsDao.getQuestionsById(questionId);
+        const questions = await questionsDao.getQuestionById(questionId);
         res.json(questions);
     });
   //update question
