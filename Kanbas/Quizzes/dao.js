@@ -12,3 +12,6 @@ export function createQuiz(quiz) {
     delete quiz._id
     return model.create(quiz);
 }
+export function getQuiz(quizId) {
+    return model.findOne({ _id: quizId });
+}
