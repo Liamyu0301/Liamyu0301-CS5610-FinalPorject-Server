@@ -11,6 +11,7 @@ import CourseRoutes from "./Kanbas/Courses/routes.js";
 import ModuleRoutes from './Kanbas/Modules/routes.js';
 import AssignmentRoutes from './Kanbas/Assignments/routes.js';
 import QuizRoutes from './Kanbas/Quizzes/routes.js';
+
 import QuestionsRoutes from "./Kanbas/Quizzes/Questions/routes.js";
 import QuizAttemptRoutes from "./Kanbas/Quizzes/QuizAttempts/routes.js";
 
@@ -38,6 +39,7 @@ app.use(session(sessionOptions));
 app.use(express.json());
 UserRoutes(app);
 CourseRoutes(app);
+QuestionsRoutes(app)
 ModuleRoutes(app);
 AssignmentRoutes(app);
 QuestionsRoutes(app);

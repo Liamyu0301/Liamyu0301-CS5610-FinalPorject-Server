@@ -4,10 +4,12 @@ import model from "./model.js";
 export function getQuestions(quizId) {
   return model.find({ quiz: quizId });
 }
+export function getQuestionById(questionId) {
+  return model.findOne({ _id: questionId});
+}
 // add question
 
 export function addQuestion(question) {
-  delete question._id
   return model.create(question);
 }
 
