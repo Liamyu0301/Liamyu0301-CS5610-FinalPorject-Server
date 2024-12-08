@@ -12,7 +12,7 @@ const schema = new mongoose.Schema(
     questionText: { type: String, required: true },
     type: {
       type: String,
-      enum: ["Multiple Choice", "True or False", "Fill in Blanks"],
+      enum: ["Multiple Choice", "True/False", "Fill in the Blank"],
       required: true
     },
     multipleChoice: {
@@ -25,14 +25,14 @@ const schema = new mongoose.Schema(
   },
     trueFalse: {
       correctAnswer: { type: Boolean, required: function () {
-        return this.type === "True or False";
+        return this.type === "True/False";
       }, } // Correct answer for true/false
     },
     fillInTheBlank: {
       answers: [
         {
           text: { type: String, required: function () {
-            return this.type === "Fill in Blanks";
+            return this.type === "Fill in the Blank";
           },
    }, // Possible correct answer
         }
