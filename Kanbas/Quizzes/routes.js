@@ -14,16 +14,26 @@ export default function QuizRoutes(app) {
         res.send(status);
     });
 
-    //get quiz object
-
+    // app.get("/api/quizzes/:quizId", async (req, res) => {
+    //     const {quizId} = req.params;
+    //     const quiz = await quizzesDao.getQuiz(quizId);
+    //     res.json(quiz);
+    // });
     app.get("/api/quizzes/:quizId", async (req, res) => {
-        const {quizId} = req.params;
-        const quiz = await quizzesDao.getQuiz(quizId);
-        res.json(quiz);
+        const { quizId } = req.params;
+        try {
+            // Fetch the quiz data
+            const quiz = await quizzesDao.getQuiz(quizId);
+            const questions = await questionsDao.getQuestionsByQuizId(quizId);
+            // Return both the quiz and the questions in the response
+            res.json({ ...quiz, questions });
+        } catch (error) {
+            console.error("Error fetching quiz and questions:", error);
+            res.status(500).send("Error fetching quiz details.");
+        }
     });
 
     //get questions for quiz
-
     app.get("/api/quizzes/:quizId/questions", async (req, res) => {
         const { quizId } = req.params;
         const questions = await questionsDao.getQuestions(quizId);

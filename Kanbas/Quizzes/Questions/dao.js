@@ -1,5 +1,10 @@
 import model from "./model.js";
 
+export async function getQuestionsByQuizId(quizId) {
+  return await Question.find({ quiz: quizId });
+}
+
+
 //get questions based on quiz
 export function getQuestions(quizId) {
   return model.find({ quiz: quizId });
