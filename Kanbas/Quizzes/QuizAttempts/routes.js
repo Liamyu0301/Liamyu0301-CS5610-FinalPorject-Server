@@ -153,12 +153,18 @@ const updateQuizAttempt = async (req, res) => {
 };
 app.put('/api/quizzes/:uid/:qid/attempt', updateQuizAttempt);
 
-const getQuizAttempt = async (req, res) => {
-  const {uid, qid} = req.params;
-  const attempt = await dao.getQuizAttemptById(uid, qid);
-  res.send(attempt);
-}
-app.get('/api/quizzes/:uid/:qid/attempt', getQuizAttempt);
+
+  const getQuizAttempt = async (req, res) => {
+    const { uid, qid } = req.params;
+    // Fetch the most recent attempt for the user and quiz
+    const attempt = await dao.getQuizAttemptById(uid, qid);
+    if (!attempt) {
+      return res.status(404).json({ message: "No attempt found for this user and quiz." });
+    }
+    res.send(attempt);
+  };
+  app.get('/api/quizzes/:uid/:qid/attempt', getQuizAttempt);
+
 
 }
 
