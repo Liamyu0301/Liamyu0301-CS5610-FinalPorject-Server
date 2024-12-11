@@ -117,16 +117,25 @@ const updateQuizAttempt = async (req, res) => {
         } else if (question.type === "True/False") {
           isCorrect = question.trueFalse.correctAnswer === answer.answer;
         } else if (question.type === "Fill in the Blank") {
-          if (!Array.isArray(answer.answer)) {
-            throw new Error(`Invalid data: answer.answer must be an array for "Fill in the Blank" questions.`);
-          }
-          isCorrect = answer.answer.every((providedAnswer, index) => {
+          let correctCount = 0;
+
+          // check each provided answer against the correct answer
+          answer.answer.forEach((providedAnswer, index) => {
             const correctAnswer = question.fillInTheBlank.answers[index];
-            return correctAnswer && correctAnswer.text === providedAnswer.text;
+            if (
+              correctAnswer &&
+              correctAnswer.text.trim().toLowerCase() === providedAnswer.text.trim().toLowerCase()
+            ) {
+              correctCount += 1;
+            }
           });
+        
+          // calculate partial points
+          isCorrect = correctCount === question.fillInTheBlank.answers.length;
+          totalScore += (question.points * correctCount) / question.fillInTheBlank.answers.length;
         }
 
-        if (isCorrect) {
+        if ((question.type === "Multiple Choice" | question.type === "True/False") && isCorrect) {
           totalScore += question.points;
         }
 
