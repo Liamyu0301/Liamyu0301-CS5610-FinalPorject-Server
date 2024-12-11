@@ -40,17 +40,27 @@ export default function QuizAttemptRoutes(app) {
       } else if (question.type === "True/False") {
         isCorrect = question.trueFalse.correctAnswer === answer.answer;
       } else if (question.type === "Fill in the Blank") {
-        // rewrite this!!! each answer is also an array 
-        isCorrect = question.fillInTheBlank.answers.every(
-          (correctAnswer) => correctAnswer.text === answer.answer.text
-        );
-      }
+        let correctCount = 0;
 
-      // Update total score if the answer is correct
-      if (isCorrect) {
+          // check each provided answer against the correct answer
+          answer.answer.forEach((providedAnswer, index) => {
+            const correctAnswer = question.fillInTheBlank.answers[index];
+            if (
+              correctAnswer &&
+              correctAnswer.text.trim().toLowerCase() === providedAnswer.text.trim().toLowerCase()
+            ) {
+              correctCount += 1;
+            }
+          });
+        
+          // calculate partial points
+          isCorrect = correctCount === question.fillInTheBlank.answers.length;
+          totalScore += (question.points * correctCount) / question.fillInTheBlank.answers.length;
+        }
+      // update total score if the answer is correct, not for fill in the blanks
+      if ((question.type === "Multiple Choice" | question.type === "True/False") && isCorrect) {
         totalScore += question.points;
       }
-
       return {
         question: question._id,
         answer: answer.answer,
