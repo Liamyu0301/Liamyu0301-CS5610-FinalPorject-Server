@@ -34,7 +34,7 @@ export default function QuizRoutes(app) {
     app.post("/api/quizzes/:quizId/questions", async (req, res) => {
         const { quizId } = req.params;
         const question = { ...req.body, quiz: quizId };
-        const newQuestion = await questionsDao.addQuestion(quiz);
+        const newQuestion = await questionsDao.addQuestion(question);
         res.send(newQuestion);
     });
 }
